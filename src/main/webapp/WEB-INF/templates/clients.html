@@ -7,7 +7,12 @@
 <body>
 <h1>Clients</h1>
 
-    <form th:action="@{/}" th:object="${clientForm}" method="post">
+<span th:text="${message}">Message...</span>
+
+    <form th:action="@{/}" th:object="${client}" method="post">
+
+        <span th:errors="*{*}">Error messages</span>
+
         <input th:field="*{name}"/>
         <input th:field="*{balance}"/>
         <button type="submit">Create client</button>

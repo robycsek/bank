@@ -4,18 +4,27 @@ import bank.backend.BankService;
 import bank.backend.Client;
 import com.sun.jmx.remote.internal.ClientListenerInfo;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
 public class ClientsController {
 
     private BankService bankService;
+
+    @ModelAttribute("clients")
+    public List<Client> clients() {
+        return bankService.listClients();
+    }
 
     public ClientsController(BankService bankService) {
         this.bankService = bankService;
@@ -32,16 +41,23 @@ public class ClientsController {
         //View
         ModelAndView modelAndView = new ModelAndView("clients");
         //Model: List<Client>
-        modelAndView.addObject("clients", bankService.listClients());
+        //Kiszervezve: clients() metódusba
+        //Model: üres form
+        //modelAndView.addObject("clients", bankService.listClients());
 
-        modelAndView.addObject("clientForm", new Client());//feltölti üres értékekkel a formot
+        modelAndView.addObject("client", new Client());//feltölti üres értékekkel a formot
 
         return modelAndView;
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public String addClient(@ModelAttribute Client client) {
+    //public String addClient(@ModelAttribute Client client) {
+    public String addClient(@Valid Client client, BindingResult result, RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            return "clients";//megmarad, amit eddig beírt
+        }
         bankService.addClient(client);
+        redirectAttributes.addFlashAttribute("message", "Client has successfully created!");
         return "redirect:/";
     }
 
