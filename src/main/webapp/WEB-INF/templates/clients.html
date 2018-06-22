@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Clients</title>
+</head>
+<body>
+<h1>Clients</h1>
+
+    <form th:action="@{/}" th:object="${clientForm}" method="post">
+        <input th:field="*{name}"/>
+        <input th:field="*{balance}"/>
+        <button type="submit">Create client</button>
+    </form>
+
+    <table>
+        <tr th:each="client: ${clients}">
+            <td th:text="${client.id}">15</td>
+            <td th:text="${client.name}"> Teszt Elek</td>
+            <td th:text="${client.balance}">800000</td>
+        </tr>
+    </table>
+</body>
+</html>
